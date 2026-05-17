@@ -9,7 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const SignInView = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
@@ -50,11 +51,12 @@ const SignInView = () => {
         {
           email: data.email,
           password: data.password,
-          callbackURL: "/", 
+          callbackURL: "/",
         },
         {
           onRequest: () => setLoading(true),
           onSuccess: () => {
+            router.push("/");
             setLoading(false);
             toast.success("Welcome back!", {
               description: "You have successfully signed in.",
@@ -210,9 +212,8 @@ const SignInView = () => {
                 {socialLoading === "google" ? (
                   <Loader2 className="size-5 animate-spin text-green-800" />
                 ) : (
-                  <FaGoogle className="size-5 text-gray-400" />
+                  <FaGoogle className="size-5 text-gray-600" />
                 )}
-                <span>Google</span>
               </Button>
               <Button
                 variant="outline"
@@ -224,9 +225,8 @@ const SignInView = () => {
                 {socialLoading === "github" ? (
                   <Loader2 className="size-5 animate-spin text-green-800" />
                 ) : (
-                  <FaGithub className="size-5 text-gray-400" />
+                  <FaGithub className="size-5 text-gray-600" />
                 )}
-                <span>GitHub</span>
               </Button>
             </div>
 
