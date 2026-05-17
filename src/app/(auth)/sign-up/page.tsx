@@ -1,6 +1,16 @@
 import React from 'react'
 import SignUpView from '@/modules/auth/ui/views/sign-up-view'
-const page = () => {
+import { headers } from 'next/headers'
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+const Page = async () => {
+  const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  
+    if(!!session){
+      return redirect('/')
+    }
   return (
     <div>
       <SignUpView/>
@@ -8,4 +18,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page;

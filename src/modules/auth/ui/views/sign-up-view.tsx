@@ -6,7 +6,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import {ArrowRight, Loader2, User, Mail, Lock } from "lucide-react";
+import { ArrowRight, Loader2, User, Mail, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
@@ -19,6 +19,7 @@ import {
   FieldError,
   FieldGroup,
 } from "@/components/ui/field";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -37,6 +38,7 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 const SignUpView = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
@@ -68,6 +70,7 @@ const SignUpView = () => {
           onRequest: () => setLoading(true),
           onSuccess: () => {
             setLoading(false);
+            router.push("/");
             toast.success("Account created!", {
               description:
                 "Welcome to Nexa AI. You have successfully signed up.",
@@ -260,9 +263,8 @@ const SignUpView = () => {
                 {socialLoading === "google" ? (
                   <Loader2 className="size-5 animate-spin text-green-800" />
                 ) : (
-                  <FaGoogle className="size-5 text-gray-400" />
+                  <FaGoogle className="size-5 text-gray-600" />
                 )}
-                <span>Google</span>
               </Button>
               <Button
                 variant="outline"
@@ -274,9 +276,8 @@ const SignUpView = () => {
                 {socialLoading === "github" ? (
                   <Loader2 className="size-5 animate-spin text-green-800" />
                 ) : (
-                  <FaGithub className="size-5 text-gray-400" />
+                  <FaGithub className="size-5 text-gray-600" />
                 )}
-                <span>GitHub</span>
               </Button>
             </div>
 
