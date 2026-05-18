@@ -1,0 +1,126 @@
+"use client";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+import {
+  VideoIcon,
+  BotIcon,
+  StarIcon,
+  LogOutIcon,
+  LayoutDashboardIcon,
+  SettingsIcon,
+  GlobeIcon,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+
+const mainNav = [
+  {
+    icon: LayoutDashboardIcon,
+    label: "Dashboard",
+    href: "/",
+  },
+  {
+    icon: VideoIcon,
+    label: "Meetings",
+    href: "/meetings",
+  },
+  {
+    icon: BotIcon,
+    label: "AI Agents",
+    href: "/agents",
+  },
+];
+
+import DashboardUserButton from "./Dashboard-user-button";
+
+export const DashboardSidebar = () => {
+  const pathname = usePathname();
+
+  return (
+    <Sidebar className="border-r border-green-900/20 bg-green-950 text-white">
+      <SidebarHeader className="p-6 pb-2">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="">
+            <div className="">
+              <Image
+                src="/logo.svg"
+                alt="Logo"
+                width={50}
+                height={50}
+                className="invert brightness-0"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-xl tracking-tight text-white">
+              Nexa AI
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-green-400 font-semibold">
+              Intelligence
+            </span>
+          </div>
+        </Link>
+      </SidebarHeader>
+
+      <div className="px-6 py-4">
+        <SidebarSeparator className="bg-green-900/30" />
+      </div>
+
+      <SidebarContent className="px-4 py-6">
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-2">
+              {mainNav.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      render={
+                        <Link
+                          href={item.href}
+                          className="flex items-center gap-3"
+                        >
+                          <item.icon
+                            className={`size-5 ${isActive ? "text-white" : "text-green-400"}`}
+                          />
+                          <span className="font-medium">{item.label}</span>
+                        </Link>
+                      }
+                      className={`
+                        h-11 px-4 rounded-xl transition-all duration-200
+                        ${
+                          isActive
+                            ? "bg-green-700 text-white shadow-md shadow-green-900/40 hover:bg-green-600"
+                            : "text-green-100 hover:bg-white/5 hover:text-white"
+                        }
+                      `}
+                    />
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-4">
+        <DashboardUserButton variant="sidebar" />
+      </SidebarFooter>
+    </Sidebar>
+  );
+};
