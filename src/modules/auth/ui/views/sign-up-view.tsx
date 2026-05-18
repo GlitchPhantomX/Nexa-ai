@@ -310,10 +310,10 @@ const SignUpView = () => {
               />
             </div>
 
-            <h2 className="text-4xl font-medium mt-3 tracking-tighter mb-4 drop-shadow-sm">
+            <h2 className="text-5xl font-black tracking-tighter mb-4 drop-shadow-sm">
               Nexa AI
             </h2>
-            <div className="h-1 w-12 bg-white/50 rounded-full mb-6"></div>
+            <div className="h-1 w-16 bg-green-500 rounded-full mb-8 shadow-[0_0_20px_rgba(34,197,94,0.5)]"></div>
           </div>
 
           <div className="absolute bottom-12 left-12 right-12">
