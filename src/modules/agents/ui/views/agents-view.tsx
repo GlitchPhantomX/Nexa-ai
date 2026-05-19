@@ -15,6 +15,14 @@ export const AgentsView = () => {
 
   const agentsQuery = trpc.agents.getMany.useQuery();
 
+  const createMutation = trpc.agents.create.useMutation({
+    onSuccess: () => {
+      setName("");
+      setInstruction("");
+      utils.agents.getMany.invalidate();
+    },
+  });
+
   if (agentsQuery.isLoading) {
     return (
       <LoadingState
@@ -33,14 +41,6 @@ export const AgentsView = () => {
       />
     );
   }
-
-  const createMutation = trpc.agents.create.useMutation({
-    onSuccess: () => {
-      setName("");
-      setInstruction("");
-      utils.agents.getMany.invalidate();
-    },
-  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

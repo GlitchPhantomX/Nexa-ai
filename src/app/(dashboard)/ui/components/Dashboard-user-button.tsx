@@ -149,7 +149,7 @@ const DashboardUserButton = ({
         side={isHeader ? "bottom" : "right"}
         sideOffset={12}
         alignOffset={-10}
-        className="w-64 ml-3.5 p-2 rounded-2xl shadow-xl border-green-100 shadow-green-900/5"
+        className="w-64 ml-3.5 p-2 rounded-2xl shadow-xl border border-gray-100 shadow-green-900/5 bg-white"
       >
         <DropdownMenuGroup>
           <DropdownMenuLabel className="p-3">
@@ -172,7 +172,7 @@ const DashboardUserButton = ({
           </DropdownMenuLabel>
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator className="bg-green-50" />
+        <DropdownMenuSeparator className="bg-gray-100" />
 
         <DropdownMenuGroup className="py-1">
           <DropdownMenuItem className="p-2.5 rounded-xl cursor-pointer focus:bg-green-50 focus:text-green-900 transition-colors group">
@@ -196,7 +196,7 @@ const DashboardUserButton = ({
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator className="bg-green-50" />
+        <DropdownMenuSeparator className="bg-gray-100" />
 
         <DropdownMenuItem
           className="p-2.5 mt-1 rounded-xl text-red-600 cursor-pointer focus:text-red-700 focus:bg-red-50 transition-colors font-semibold group"
