@@ -20,7 +20,6 @@ export const DashboardNavbar = () => {
         "flex items-center justify-between px-4 md:px-6 shrink-0",
       )}
     >
-      {/* Left */}
       <div className="flex items-center gap-4">
         <SidebarTrigger className="bg-gray-50 hover:bg-green-50 hover:text-green-700 transition-colors rounded-lg h-9 w-9 flex items-center justify-center border border-gray-200 shadow-sm" />
 
@@ -32,7 +31,6 @@ export const DashboardNavbar = () => {
         </div>
       </div>
 
-      {/* Center — Search bar with ⌘K inside */}
       <div className="flex-1 max-w-md mx-6 hidden sm:block">
         <button
           type="button"
@@ -55,9 +53,7 @@ export const DashboardNavbar = () => {
         </button>
       </div>
 
-      {/* Right */}
       <div className="flex items-center gap-3">
-        {/* Mobile: icon-only search */}
         <button
           onClick={openShortcuts}
           className="flex sm:hidden items-center justify-center h-9 w-9 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 hover:bg-green-50 hover:text-green-600 hover:border-green-300 transition-all shadow-sm"
@@ -70,7 +66,6 @@ export const DashboardNavbar = () => {
           <span>Feedback</span>
         </button>
 
-        {/* User button */}
         <DashboardUserButton variant="header" />
       </div>
     </header>
