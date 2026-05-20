@@ -1,20 +1,35 @@
-import React from 'react'
-import AgnetsView from '@/modules/agents/ui/views/agents-view'
+import React, { Suspense } from 'react'
+import AgentsView from '@/modules/agents/ui/views/agents-view'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient, trpc } from '@/trpc/server'
-import AgentsListHeader from '@/modules/agents/ui/components/agents-list-header'
-import { Suspense } from 'react'
-const Page = async () => {
-    const queryClient = getQueryClient()
-    void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions());
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants'
+
+interface PageProps {
+  searchParams: Promise<{ search?: string; page?: string; pageSize?: string }>;
+}
+
+const Page = async ({ searchParams }: PageProps) => {
+  const queryClient = getQueryClient();
+  const params = await searchParams;
+
+  const search = params.search ?? "";
+  const page = Number(params.page ?? DEFAULT_PAGE);
+  const pageSize = Number(params.pageSize ?? DEFAULT_PAGE_SIZE);
+
+  void queryClient.prefetchQuery(
+    trpc.agents.getMany.queryOptions({
+      search,
+      page,
+      pageSize,
+    })
+  );
+
   return (
-    <>
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p>Loading...</p>}>
-        <AgnetsView />
+      <Suspense fallback={<p>Loading Fleet...</p>}>
+        <AgentsView />
       </Suspense>
     </HydrationBoundary>
-    </>
   )
 }
 

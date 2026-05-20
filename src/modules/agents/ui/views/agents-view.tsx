@@ -12,30 +12,23 @@ import { columns, Agent } from "../components/columns";
 
 import { GeneratedAvatar } from "@/components/generated-avatar";
 
+import { useAgentsFilter } from "@/app/(dashboard)/agents/hooks/use-agents-filter";
+
+import { DataPagination } from "../components/data-pagination";
+
 export const AgentsView = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const agentsQuery = trpc.agents.getMany.useQuery();
+  const [{ search, page, pageSize }, setFilter] = useAgentsFilter();
 
-  if (agentsQuery.isLoading) {
-    return (
-      <LoadingState
-        title="Accessing Fleet Command"
-        description="Synchronizing your autonomous agents with the Nexa AI network..."
-      />
-    );
-  }
+  const agentsQuery = trpc.agents.getMany.useQuery({
+    search,
+    page,
+    pageSize,
+  });
 
-  if (agentsQuery.isError) {
-    return (
-      <ErrorState
-        title="Communication Failure"
-        description={agentsQuery.error.message}
-        onRetry={() => agentsQuery.refetch()}
-      />
-    );
-  }
-
-  const tableData = (agentsQuery.data ?? []) as unknown as Agent[];
+  const tableData = (agentsQuery.data?.data ?? []) as unknown as Agent[];
+  const total = agentsQuery.data?.total ?? 0;
+  const totalPages = agentsQuery.data?.totalPages ?? 0;
 
   return (
     <div className="flex flex-col gap-10">
@@ -56,21 +49,45 @@ export const AgentsView = () => {
           <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full border border-gray-100">
             <span className="size-1.5 rounded-full bg-green-500 animate-pulse"></span>
             <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-              {tableData.length} Active
+              {agentsQuery.isLoading ? "..." : total} Active
             </span>
           </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
-          <DataTable
-            columns={columns}
-            data={tableData}
-            onNewAgent={() => setIsDialogOpen(true)}
-          />
+          {agentsQuery.isLoading ? (
+            <div className="py-20 flex flex-col items-center justify-center gap-4">
+              <div className="size-8 rounded-full border-2 border-[#3B6D11]/20 border-t-[#3B6D11] animate-spin" />
+              <p className="text-xs text-gray-500 font-medium tracking-tight">
+                Synchronizing with Nexa network...
+              </p>
+            </div>
+          ) : agentsQuery.isError ? (
+            <div className="py-20">
+              <ErrorState
+                title="Communication Failure"
+                description={agentsQuery.error.message}
+                onRetry={() => agentsQuery.refetch()}
+              />
+            </div>
+          ) : (
+            <>
+              <DataTable
+                columns={columns}
+                data={tableData}
+                onNewAgent={() => setIsDialogOpen(true)}
+                searchValue={search}
+                onSearchChange={(value) => setFilter({ search: value, page: 1 })}
+              />
+              <div className="border-t border-gray-50 px-4">
+                <DataPagination total={total} totalPages={totalPages} />
+              </div>
+            </>
+          )}
         </div>
       </section>
 
-      {/* {tableData.length > 0 && (
+      {!agentsQuery.isLoading && !agentsQuery.isError && tableData.length > 0 && (
         <section>
           <div className="flex flex-col mb-6 px-1">
             <h2 className="text-lg font-bold text-gray-900 tracking-tight">Operative Briefings</h2>
@@ -129,7 +146,7 @@ export const AgentsView = () => {
             ))}
           </div>
         </section>
-      )} */}
+      )}
     </div>
   );
 };

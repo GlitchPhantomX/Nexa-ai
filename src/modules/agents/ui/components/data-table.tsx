@@ -6,11 +6,14 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { SearchIcon } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onNewAgent?: () => void;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
 function EmptyState({ onNewAgent }: { onNewAgent?: () => void }) {
@@ -75,6 +78,8 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onNewAgent,
+  searchValue,
+  onSearchChange,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -86,14 +91,27 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
+      <div className="px-4 py-4 flex items-center justify-between border-b border-gray-50">
+        <div className="relative w-full max-w-sm">
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search agents by name or instructions..."
+            value={searchValue}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+            className="w-full pl-9 pr-4 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#3B6D11]/20 focus:border-[#3B6D11]/30 transition-all"
+          />
+        </div>
+      </div>
+
       {hasRows && (
-        <div className="grid w-full px-4 pb-2 border-b border-gray-100">
+        <div className="grid w-full px-4 pb-2 border-b border-gray-100 mt-2">
           {table.getHeaderGroups().map((headerGroup) => (
             <div
               key={headerGroup.id}
               style={{
                 display: "grid",
-                gridTemplateColumns: "2fr 3fr 1.5fr 1fr 1fr",
+                gridTemplateColumns: "2fr 2.5fr 1fr 1.2fr 0.8fr 1fr",
               }}
             >
               {headerGroup.headers.map((header) => (
@@ -122,7 +140,7 @@ export function DataTable<TData, TValue>({
               className="group px-4 rounded-xl hover:bg-[#f4f8f4] transition-colors duration-150 cursor-pointer"
               style={{
                 display: "grid",
-                gridTemplateColumns: "2fr 3fr 1.5fr 1fr 1fr",
+                gridTemplateColumns: "2fr 2.5fr 1fr 1.2fr 0.8fr 1fr",
                 alignItems: "center",
               }}
             >
@@ -140,3 +158,4 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
+

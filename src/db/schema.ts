@@ -1,5 +1,7 @@
 import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { nanoid } from "nanoid";
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -97,3 +99,40 @@ export const agents = pgTable(
   },
   (table) => [index("agents_userId_idx").on(table.userId)],
 );
+
+export const meetings = pgTable(
+  "meetings",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    agentId: text("agent_id")
+      .notNull()
+      .references(() => agents.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    startTime: timestamp("start_time").notNull(),
+    endTime: timestamp("end_time").notNull(),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("meetings_agentId_idx").on(table.agentId)],
+);
+
+export const agentsRelations = relations(agents, ({ many }) => ({
+  meetings: many(meetings),
+}));
+
+export const meetingsRelations = relations(meetings, ({ one }) => ({
+  agent: one(agents, {
+    fields: [meetings.agentId],
+    references: [agents.id],
+  }),
+}));
