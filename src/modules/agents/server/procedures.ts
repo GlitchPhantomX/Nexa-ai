@@ -70,6 +70,26 @@ export const agentsRouter = createTRPCRouter({
         totalPages: Math.ceil(total / pageSize),
       };
     }),
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const [agent] = await db
+        .select({
+          id: agents.id,
+          name: agents.name,
+          userId: agents.userId,
+          instruction: agents.instruction,
+          createdAt: agents.createdAt,
+          updatedAt: agents.updatedAt,
+          meetingCount: sql<number>`count(${meetings.id})::int`,
+        })
+        .from(agents)
+        .leftJoin(meetings, eq(agents.id, meetings.agentId))
+        .where(and(eq(agents.id, input.id), eq(agents.userId, ctx.userId)))
+        .groupBy(agents.id);
+
+      return agent || null;
+    }),
   create: protectedProcedure
     .input(agentsInsertSchema.omit({ userId: true }))
     .mutation(async ({ ctx, input }) => {

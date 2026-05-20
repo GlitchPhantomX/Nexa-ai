@@ -5,6 +5,8 @@ import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Button } from "@/components/ui/button";
 import { VideoIcon } from "lucide-react";
 
+import Link from "next/link";
+
 export type Agent = {
   id: string;
   name: string;
@@ -21,19 +23,19 @@ export const columns: ColumnDef<Agent>[] = [
       const name = row.getValue("name") as string;
       const id = row.original.id;
       return (
-        <div className="flex items-center gap-3">
-          <div className="shrink-0 w-8 h-8 rounded-lg bg-[#e2ede2] border border-[#c4d8c4] flex items-center justify-center overflow-hidden">
+        <Link href={`/agents/${id}`} className="flex items-center gap-3 group/link">
+          <div className="shrink-0 w-8 h-8 rounded-lg bg-[#e2ede2] border border-[#c4d8c4] flex items-center justify-center overflow-hidden group-hover/link:border-[#3B6D11] transition-colors">
             <GeneratedAvatar seed={name} style="bottts" size="sm" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-900 leading-none">
+            <span className="text-sm font-medium text-gray-900 leading-none group-hover/link:text-[#3B6D11] transition-colors">
               {name}
             </span>
             <span className="text-[10px] font-mono text-gray-400 mt-1 tracking-tight">
               {id.slice(0, 8)}
             </span>
           </div>
-        </div>
+        </Link>
       );
     },
   },
