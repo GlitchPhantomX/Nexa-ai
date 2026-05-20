@@ -100,21 +100,28 @@ export const agents = pgTable(
   (table) => [index("agents_userId_idx").on(table.userId)],
 );
 
+export const meetingStatus = ["scheduled", "ongoing", "completed", "failed"] as const;
+
 export const meetings = pgTable(
   "meetings",
   {
     id: text("id")
       .primaryKey()
       .$defaultFn(() => nanoid()),
-    agentId: text("agent_id")
-      .notNull()
-      .references(() => agents.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    title: text("title").notNull(),
-    startTime: timestamp("start_time").notNull(),
-    endTime: timestamp("end_time").notNull(),
+    agentId: text("agent_id")
+      .notNull()
+      .references(() => agents.id, { onDelete: "cascade" }),
+    instructions: text("instructions"),
+    status: text("status", { enum: meetingStatus }).default("scheduled").notNull(),
+    startedAt: timestamp("started_at"),
+    endedAt: timestamp("ended_at"),
+    transcriptUrl: text("transcript_url"),
+    summary: text("summary"),
+    recordingUrl: text("recording_url"),
     createdAt: timestamp("created_at")
       .$defaultFn(() => new Date())
       .notNull(),
@@ -123,7 +130,7 @@ export const meetings = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [index("meetings_agentId_idx").on(table.agentId)],
+  (table) => [index("meetings_userId_idx").on(table.userId)],
 );
 
 export const agentsRelations = relations(agents, ({ many }) => ({
