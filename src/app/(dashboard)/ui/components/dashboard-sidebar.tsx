@@ -66,6 +66,7 @@ export const DashboardSidebar = () => {
                 width={50}
                 height={50}
                 className="invert brightness-0"
+                style={{ height: "auto" }}
               />
             </div>
             <div className="flex flex-col">
