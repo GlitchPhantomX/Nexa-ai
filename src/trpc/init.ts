@@ -4,11 +4,15 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 export const createTRPCContext = cache(async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  return { userId: session?.user.id };
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    return { userId: session?.user.id };
+  } catch (error) {
+    console.error("Failed to get session in tRPC context:", error);
+    return { userId: undefined };
+  }
 });
 
 const t = initTRPC.create();

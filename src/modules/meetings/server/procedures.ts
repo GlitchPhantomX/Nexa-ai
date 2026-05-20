@@ -3,8 +3,9 @@ import { meetings, agents } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { meetingsInsertSchema, meetingsUpdateSchema } from "../schemas";
 import { z } from "zod";
-import { eq, and, desc, count } from "drizzle-orm";
+import { eq, and, desc, count, or, ilike } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/constants";
+import { meetingStatus as meetingStatusEnum } from "@/db/schema";
 
 export const meetingsRouter = createTRPCRouter({
   getMany: protectedProcedure
@@ -12,13 +13,33 @@ export const meetingsRouter = createTRPCRouter({
       z.object({
         page: z.number().min(1).default(DEFAULT_PAGE),
         pageSize: z.number().min(1).max(100).default(DEFAULT_PAGE_SIZE),
+        search: z.string().nullish(),
+        status: z.string().nullish(),
+        agentId: z.string().nullish(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { page, pageSize } = input;
+      const { page, pageSize, search, status, agentId } = input;
       const offset = (page - 1) * pageSize;
 
-      const whereClause = eq(meetings.userId, ctx.userId);
+      const filters = [eq(meetings.userId, ctx.userId)];
+
+      if (search && search.trim() !== "") {
+        filters.push(ilike(meetings.name, `%${search}%`));
+      }
+
+      if (status && status !== "" && status !== "all") {
+        // Only apply status filter if it's one of the valid statuses
+        if (meetingStatusEnum.includes(status as any)) {
+          filters.push(eq(meetings.status, status as any));
+        }
+      }
+
+      if (agentId && agentId !== "" && agentId !== "all") {
+        filters.push(eq(meetings.agentId, agentId));
+      }
+
+      const whereClause = and(...filters);
 
       const dataPromise = db
         .select({

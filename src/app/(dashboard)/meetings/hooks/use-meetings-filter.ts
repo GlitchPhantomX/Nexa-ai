@@ -9,13 +9,25 @@ export const useMeetingsFilter = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const search = searchParams.get("search") ?? "";
+  const status = searchParams.get("status") ?? "";
+  const agentId = searchParams.get("agentId") ?? "";
   const page = Number(searchParams.get("page") ?? DEFAULT_PAGE);
   const pageSize = Number(searchParams.get("pageSize") ?? DEFAULT_PAGE_SIZE);
 
   const setFilter = useCallback(
-    (updates: { page?: number; pageSize?: number }) => {
+    (updates: { search?: string; status?: string; agentId?: string; page?: number; pageSize?: number }) => {
       const params = new URLSearchParams(searchParams.toString());
 
+      if (updates.search !== undefined) {
+        updates.search ? params.set("search", updates.search) : params.delete("search");
+      }
+      if (updates.status !== undefined) {
+        updates.status ? params.set("status", updates.status) : params.delete("status");
+      }
+      if (updates.agentId !== undefined) {
+        updates.agentId ? params.set("agentId", updates.agentId) : params.delete("agentId");
+      }
       if (updates.page !== undefined) {
         updates.page === DEFAULT_PAGE ? params.delete("page") : params.set("page", String(updates.page));
       }
@@ -28,5 +40,5 @@ export const useMeetingsFilter = () => {
     [router, pathname, searchParams]
   );
 
-  return [{ page, pageSize }, setFilter] as const;
+  return [{ search, status, agentId, page, pageSize }, setFilter] as const;
 };
