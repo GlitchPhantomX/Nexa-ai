@@ -103,4 +103,30 @@ export const agentsRouter = createTRPCRouter({
         .returning();
       return newAgent;
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1).optional(),
+        instruction: z.string().min(1).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      const [updatedAgent] = await db
+        .update(agents)
+        .set(data)
+        .where(and(eq(agents.id, id), eq(agents.userId, ctx.userId)))
+        .returning();
+      return updatedAgent || null;
+    }),
+  remove: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [deletedAgent] = await db
+        .delete(agents)
+        .where(and(eq(agents.id, input.id), eq(agents.userId, ctx.userId)))
+        .returning();
+      return deletedAgent || null;
+    }),
 });
