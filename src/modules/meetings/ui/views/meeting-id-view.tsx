@@ -12,7 +12,9 @@ import {
   FileTextIcon,
   PlayCircleIcon,
   ClipboardListIcon,
-  ExternalLinkIcon
+  ExternalLinkIcon,
+  CheckCircle2Icon ,
+  AlertCircleIcon
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -23,16 +25,47 @@ interface MeetingIdViewProps {
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
-  const styles = {
-    scheduled: "bg-blue-50 text-blue-600 border-blue-100",
-    ongoing: "bg-amber-50 text-amber-600 border-amber-100 animate-pulse",
-    completed: "bg-green-50 text-green-600 border-green-100",
-    failed: "bg-red-50 text-red-600 border-red-100",
-  }[status] || "bg-gray-50 text-gray-600 border-gray-100";
+  const config = {
+    scheduled: {
+      label: "Upcoming",
+      styles: "bg-blue-50 text-blue-600 border-blue-100",
+      icon: <CalendarIcon className="size-3" />,
+    },
+    ongoing: {
+      label: "Active",
+      styles: "bg-green-50 text-green-600 border-green-100 animate-pulse",
+      icon: <PlayCircleIcon className="size-3" />,
+    },
+    processing: {
+      label: "Processing",
+      styles: "bg-amber-50 text-amber-600 border-amber-100 animate-pulse",
+      icon: <ClockIcon className="size-3" />,
+    },
+    completed: {
+      label: "Completed",
+      styles: "bg-[#f0f4f0] text-[#3B6D11] border-[#d4e0d4]",
+      icon: <CheckCircle2Icon className="size-3" />,
+    },
+    cancelled: {
+      label: "Cancelled",
+      styles: "bg-gray-50 text-gray-400 border-gray-100",
+      icon: <AlertCircleIcon className="size-3" />,
+    },
+    failed: {
+      label: "Failed",
+      styles: "bg-red-50 text-red-600 border-red-100",
+      icon: <AlertCircleIcon className="size-3" />,
+    },
+  }[status as any] || {
+    label: status,
+    styles: "bg-gray-50 text-gray-600 border-gray-100",
+    icon: <VideoIcon className="size-3" />,
+  };
 
   return (
-    <div className={`px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-widest ${styles}`}>
-      {status}
+    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-widest ${config.styles}`}>
+      {config.icon}
+      {config.label}
     </div>
   );
 };
