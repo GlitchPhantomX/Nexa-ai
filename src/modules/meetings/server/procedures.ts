@@ -3,7 +3,7 @@ import { meetings, agents } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { meetingsInsertSchema, meetingsUpdateSchema } from "../schemas";
 import { z } from "zod";
-import { eq, and, desc, count, or, ilike } from "drizzle-orm";
+import { eq, and, desc, count, or, ilike, sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/constants";
 import { meetingStatus as meetingStatusEnum } from "@/db/schema";
 
@@ -50,6 +50,7 @@ export const meetingsRouter = createTRPCRouter({
           status: meetings.status,
           startedAt: meetings.startedAt,
           endedAt: meetings.endedAt,
+          duration: sql<number>`EXTRACT(EPOCH FROM (${meetings.endedAt} - ${meetings.startedAt})) / 60`,
           createdAt: meetings.createdAt,
         })
         .from(meetings)
@@ -93,6 +94,7 @@ export const meetingsRouter = createTRPCRouter({
           status: meetings.status,
           startedAt: meetings.startedAt,
           endedAt: meetings.endedAt,
+          duration: sql<number>`EXTRACT(EPOCH FROM (${meetings.endedAt} - ${meetings.startedAt})) / 60`,
           transcriptUrl: meetings.transcriptUrl,
           summary: meetings.summary,
           recordingUrl: meetings.recordingUrl,
