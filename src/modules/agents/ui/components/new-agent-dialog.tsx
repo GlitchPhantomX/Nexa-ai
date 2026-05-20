@@ -60,14 +60,7 @@ export const NewAgentDialog = ({ open, onOpenChange }: NewAgentDialogProps) => {
   });
 
   const onSubmit = (data: FormValues) => {
-    if (!session?.user?.id) {
-      toast.error("Please sign in to create an agent.");
-      return;
-    }
-    createMutation.mutate({
-      ...data,
-      userId: session.user.id,
-    });
+    createMutation.mutate(data);
   };
 
   return (

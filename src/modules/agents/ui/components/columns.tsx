@@ -10,6 +10,7 @@ export type Agent = {
   name: string;
   instruction: string;
   createdAt: Date;
+  meetingCount: number;
 };
 
 export const columns: ColumnDef<Agent>[] = [
@@ -44,6 +45,21 @@ export const columns: ColumnDef<Agent>[] = [
         <span className="text-sm text-gray-400 line-clamp-1 max-w-[280px]">
           {row.getValue("instruction")}
         </span>
+      );
+    },
+  },
+  {
+    accessorKey: "meetingCount",
+    header: "Meetings",
+    cell: ({ row }) => {
+      const count = row.getValue("meetingCount") as number;
+      return (
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-semibold text-gray-700">{count}</span>
+          <span className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">
+            Sessions
+          </span>
+        </div>
       );
     },
   },
