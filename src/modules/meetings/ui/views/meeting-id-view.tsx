@@ -118,7 +118,17 @@ export const MeetingIdView = ({ meetingId }: MeetingIdViewProps) => {
             <h1 className="text-xl font-bold text-gray-900 tracking-tight">Meeting Intelligence</h1>
           </div>
         </div>
-        <StatusBadge status={meeting.status} />
+        <div className="flex items-center gap-2">
+          {["scheduled", "ongoing"].includes(meeting.status) && (
+            <Button asChild className="rounded-xl h-10 px-6 font-bold bg-[#3B6D11] hover:bg-[#2d540d] transition-all gap-2">
+              <Link href={`/call/${meeting.id}`}>
+                <VideoIcon className="size-4" />
+                {meeting.status === "scheduled" ? "Start Meeting" : "Join Call"}
+              </Link>
+            </Button>
+          )}
+          <StatusBadge status={meeting.status} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

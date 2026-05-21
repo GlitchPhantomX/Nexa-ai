@@ -6,8 +6,89 @@ import { z } from "zod";
 import { eq, and, desc, count, or, ilike, sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/constants";
 import { meetingStatus as meetingStatusEnum } from "@/db/schema";
+import { streamVideo } from "@/lib/stream-video";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const meetingsRouter = createTRPCRouter({
+  getSession: protectedProcedure.query(async () => {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    return session;
+  }),
+
+  getToken: protectedProcedure.query(async ({ ctx }) => {
+    const expiration = Math.floor(Date.now() / 1000) + 3600; // 1 hour
+    const issuedAt = Math.floor(Date.now() / 1000) - 60; // 1 minute ago
+    return streamVideo.generateUserToken({
+      user_id: ctx.userId,
+      exp: expiration,
+      iat: issuedAt,
+    });
+  }),
+
+  createCall: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [meeting] = await db
+        .select()
+        .from(meetings)
+        .where(and(eq(meetings.id, input.id), eq(meetings.userId, ctx.userId)));
+
+      if (!meeting) {
+        throw new Error("Meeting not found");
+      }
+
+      const call = streamVideo.video.call("default", meeting.id);
+
+      await call.getOrCreate({
+        data: {
+          created_by_id: ctx.userId,
+          settings_override: {
+            recording: {
+              mode: "available",
+              quality: "720p",
+            },
+            transcriptions: {
+              mode: "available",
+            },
+          },
+        },
+      });
+
+      if (meeting.status === "scheduled") {
+        await db
+          .update(meetings)
+          .set({
+            status: "ongoing",
+            startedAt: new Date(),
+          })
+          .where(eq(meetings.id, meeting.id));
+      }
+
+      return {
+        id: meeting.id,
+        type: "default",
+      };
+    }),
+
+  getRecordings: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const call = streamVideo.video.call("default", input.id);
+      const { recordings } = await call.listRecordings();
+      return recordings;
+    }),
+
+  getTranscriptions: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const call = streamVideo.video.call("default", input.id);
+      const { transcriptions } = await call.listTranscriptions();
+      return transcriptions;
+    }),
+
   getMany: protectedProcedure
     .input(
       z.object({
