@@ -74,7 +74,7 @@ export function GeneratedAvatar({
   const avatarDataUri = useMemo(() => {
     if (!seed) return "";
     try {
-      return createAvatar(collection, {
+      return createAvatar(collection as any, {
         seed,
         ...(style === "initials" ? {
           backgroundColor: ["22c55e", "166534", "14532d"],

@@ -9,7 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,20 +29,17 @@ type FormValues = z.infer<typeof formSchema>;
 
 const SignInView = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: searchParams.get("email") || "",
+      password: searchParams.get("password") || "",
     },
   });
-
-  useEffect(() => {
-    form.setFocus("email");
-  }, [form]);
 
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
@@ -78,6 +75,21 @@ const SignInView = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const email = searchParams.get("email");
+    const password = searchParams.get("password");
+
+    if (email && password) {
+      onSubmit({ email, password });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!searchParams.get("email")) {
+      form.setFocus("email");
+    }
+  }, [form, searchParams]);
 
   const handleSocialSignIn = async (provider: "google" | "github") => {
     setSocialLoading(provider);

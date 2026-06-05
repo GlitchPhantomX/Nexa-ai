@@ -90,7 +90,7 @@ const MeetingsListHeader = ({ onOpenDialog }: MeetingsListHeaderProps) => {
         <div className="flex items-center gap-3">
           <Select 
             value={status || "all"} 
-            onValueChange={(val) => setFilter({ status: val === "all" ? "" : val, page: 1 })}
+            onValueChange={(val: string | null) => setFilter({ status: val === "all" || val === null ? "" : val, page: 1 })}
           >
             <SelectTrigger className="w-[160px] h-11 rounded-xl border-gray-100 bg-gray-50/50 focus:bg-white text-xs font-semibold text-gray-600">
               <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ const MeetingsListHeader = ({ onOpenDialog }: MeetingsListHeaderProps) => {
 
           <Select 
             value={agentId || "all"} 
-            onValueChange={(val) => setFilter({ agentId: val === "all" ? "" : val, page: 1 })}
+            onValueChange={(val: string | null) => setFilter({ agentId: val === "all" || val === null ? "" : val, page: 1 })}
           >
             <SelectTrigger className="w-[180px] h-11 rounded-xl border-gray-100 bg-gray-50/50 focus:bg-white text-xs font-semibold text-gray-600">
               <div className="flex items-center gap-2">

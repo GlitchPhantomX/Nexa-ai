@@ -50,7 +50,7 @@ export const meetingsRouter = createTRPCRouter({
               mode: "available",
               quality: "720p",
             },
-            transcriptions: {
+            transcription: {
               mode: "available",
             },
           },

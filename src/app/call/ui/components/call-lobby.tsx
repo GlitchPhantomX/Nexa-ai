@@ -16,8 +16,8 @@ export const CallLobby = () => {
     useCameraState 
   } = useCallStateHooks();
   
-  const { isMuted: isMicMuted, microphone } = useMicrophoneState();
-  const { isMuted: isCamMuted, camera } = useCameraState();
+  const { isMute: isMicMuted, microphone } = useMicrophoneState();
+  const { isMute: isCamMuted, camera } = useCameraState();
 
   const [isJoining, setIsJoining] = useState(false);
 

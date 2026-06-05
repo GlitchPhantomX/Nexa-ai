@@ -42,7 +42,7 @@ export const NewMeetingDialog = ({
   const agentsQuery = trpc.agents.getMany.useQuery({ pageSize: 100 });
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(meetingsInsertSchema),
+    resolver: zodResolver(meetingsInsertSchema) as any,
     defaultValues: {
       name: "",
       agentId: "",
@@ -109,7 +109,7 @@ export const NewMeetingDialog = ({
               </FieldLabel>
               <Select
                 disabled={createMutation.isPending || agentsQuery.isLoading}
-                onValueChange={(value) => form.setValue("agentId", value)}
+                onValueChange={(value) => value && form.setValue("agentId", value)}
                 defaultValue={form.getValues("agentId")}
               >
                 <SelectTrigger className="h-10 rounded-lg border border-[#a8c8a8] bg-gray-50 text-sm focus:bg-white focus:ring-[#3B6D11]/20 transition-all">

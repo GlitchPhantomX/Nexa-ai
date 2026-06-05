@@ -14,7 +14,7 @@ export const homeRouter = createTRPCRouter({
     }),
   getStats: baseProcedure.query(async ({ ctx }) => {
     // If not logged in, return empty stats
-    if (!ctx.userId) {
+    if (!(ctx as any).userId) {
       return {
         totalMeetings: 0,
         aiAgentsActive: 0,
@@ -26,12 +26,12 @@ export const homeRouter = createTRPCRouter({
     const [meetingsCount] = await db
       .select({ total: count() })
       .from(meetings)
-      .where(eq(meetings.userId, ctx.userId));
+      .where(eq(meetings.userId, (ctx as any).userId));
 
     const [agentsCount] = await db
       .select({ total: count() })
       .from(agents)
-      .where(eq(agents.userId, ctx.userId));
+      .where(eq(agents.userId, (ctx as any).userId));
 
     return {
       totalMeetings: meetingsCount.total,

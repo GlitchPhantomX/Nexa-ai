@@ -25,7 +25,7 @@ interface MeetingIdViewProps {
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
-  const config = {
+  const config: { label: string; styles: string; icon: React.ReactNode } = ({
     scheduled: {
       label: "Upcoming",
       styles: "bg-blue-50 text-blue-600 border-blue-100",
@@ -56,7 +56,7 @@ const StatusBadge = ({ status }: { status: string }) => {
       styles: "bg-red-50 text-red-600 border-red-100",
       icon: <AlertCircleIcon className="size-3" />,
     },
-  }[status as any] || {
+  } as any)[status] || {
     label: status,
     styles: "bg-gray-50 text-gray-600 border-gray-100",
     icon: <VideoIcon className="size-3" />,
