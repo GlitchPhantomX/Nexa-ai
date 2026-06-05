@@ -251,14 +251,16 @@ export const MeetingsView = () => {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                              >
-                                <MoreVerticalIcon className="size-4" />
-                              </Button>
+                            <DropdownMenuTrigger
+                              render={
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="size-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                                />
+                              }
+                            >
+                              <MoreVerticalIcon className="size-4" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                               align="end"

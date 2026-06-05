@@ -15,7 +15,7 @@ export const createTRPCContext = cache(async () => {
   }
 });
 
-const t = initTRPC.create();
+const t = initTRPC.context<{ userId: string | undefined }>().create();
 
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;

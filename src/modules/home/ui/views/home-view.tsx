@@ -106,8 +106,8 @@ export const HomeView = () => {
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y divide-gray-100">
-            {stats?.recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-4 px-6 hover:bg-gray-50/80 transition-colors cursor-default group">
+            {stats?.recentActivity.map((activity: any) => (
+              <div key={activity.id || activity.title} className="flex items-center justify-between p-4 px-6 hover:bg-gray-50/80 transition-colors cursor-default group">
                 <div className="flex items-center gap-4">
                   <div className={cn(
                     "size-11 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105",

@@ -161,14 +161,16 @@ export const AgentIdView = ({ agentId }: AgentIdViewProps) => {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-lg cursor-pointer hover:bg-gray-50 text-gray-500 hover:text-gray-700"
-            >
-              <MoreVerticalIcon className="size-4" />
-            </Button>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-lg cursor-pointer hover:bg-gray-50 text-gray-500 hover:text-gray-700"
+              />
+            }
+          >
+            <MoreVerticalIcon className="size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"

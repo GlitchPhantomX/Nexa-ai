@@ -130,7 +130,7 @@ const DashboardUserButton = ({
                   isHeader ? "text-green-600/70" : "text-green-400",
                 )}
               >
-                {data.user.role || "Pro User"}
+                { "Pro User"}
               </span>
             </div>
             <div className="ml-auto">
