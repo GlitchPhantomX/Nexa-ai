@@ -6,7 +6,8 @@ import { createTRPCRouter } from "../init";
 
 export const appRouter = createTRPCRouter({
   hello: homeRouter.hello,
-  getStats: homeRouter.getStats,
+  getDashboardData: homeRouter.getDashboardData,
+  getSystemHealth: homeRouter.getSystemHealth,
   agents: agentsRouter,
   meetings: meetingsRouter,
 });

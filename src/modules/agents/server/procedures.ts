@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { agents, meetings } from "@/db/schema";
+import { agents, meetings, activities } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { agentsInsertSchema } from "../schemas";
 import { z } from "zod";
@@ -101,6 +101,14 @@ export const agentsRouter = createTRPCRouter({
           userId: ctx.userId,
         })
         .returning();
+
+      await db.insert(activities).values({
+        userId: ctx.userId,
+        type: "agent_created",
+        title: `Agent Created: ${newAgent.name}`,
+        description: `A new AI agent "${newAgent.name}" has been deployed to your workspace.`,
+      });
+
       return newAgent;
     }),
   update: protectedProcedure
@@ -118,6 +126,16 @@ export const agentsRouter = createTRPCRouter({
         .set(data)
         .where(and(eq(agents.id, id), eq(agents.userId, ctx.userId)))
         .returning();
+
+      if (updatedAgent) {
+        await db.insert(activities).values({
+          userId: ctx.userId,
+          type: "agent_updated",
+          title: `Agent Updated: ${updatedAgent.name}`,
+          description: `The configuration for agent "${updatedAgent.name}" has been updated.`,
+        });
+      }
+
       return updatedAgent || null;
     }),
   remove: protectedProcedure
@@ -127,6 +145,16 @@ export const agentsRouter = createTRPCRouter({
         .delete(agents)
         .where(and(eq(agents.id, input.id), eq(agents.userId, ctx.userId)))
         .returning();
+
+      if (deletedAgent) {
+        await db.insert(activities).values({
+          userId: ctx.userId,
+          type: "agent_deleted",
+          title: `Agent Deleted: ${deletedAgent.name}`,
+          description: `AI agent "${deletedAgent.name}" has been removed from your workspace.`,
+        });
+      }
+
       return deletedAgent || null;
     }),
 });

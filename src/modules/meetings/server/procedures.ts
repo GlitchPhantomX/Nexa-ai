@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { meetings, agents } from "@/db/schema";
+import { meetings, agents, activities } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { meetingsInsertSchema, meetingsUpdateSchema } from "../schemas";
 import { z } from "zod";
@@ -65,6 +65,13 @@ export const meetingsRouter = createTRPCRouter({
             startedAt: new Date(),
           })
           .where(eq(meetings.id, meeting.id));
+
+        await db.insert(activities).values({
+          userId: ctx.userId,
+          type: "meeting_started",
+          title: `Meeting Started: ${meeting.name}`,
+          description: `The meeting "${meeting.name}" has successfully started with an AI agent.`,
+        });
       }
 
       return {
@@ -198,6 +205,14 @@ export const meetingsRouter = createTRPCRouter({
           userId: ctx.userId,
         })
         .returning();
+
+      await db.insert(activities).values({
+        userId: ctx.userId,
+        type: "meeting_created",
+        title: `Meeting Scheduled: ${newMeeting.name}`,
+        description: `A new meeting "${newMeeting.name}" has been scheduled.`,
+      });
+
       return newMeeting;
     }),
 
@@ -210,6 +225,16 @@ export const meetingsRouter = createTRPCRouter({
         .set(data)
         .where(and(eq(meetings.id, id), eq(meetings.userId, ctx.userId)))
         .returning();
+
+      if (updatedMeeting && data.status === "completed") {
+         await db.insert(activities).values({
+            userId: ctx.userId,
+            type: "meeting_completed",
+            title: `Meeting Completed: ${updatedMeeting.name}`,
+            description: `Meeting "${updatedMeeting.name}" has ended. AI is now processing recordings and transcripts.`,
+         });
+      }
+
       return updatedMeeting || null;
     }),
 
