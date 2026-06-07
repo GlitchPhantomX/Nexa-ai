@@ -143,3 +143,56 @@ export const meetingsRelations = relations(meetings, ({ one }) => ({
     references: [agents.id],
   }),
 }));
+
+export const activityType = [
+  "meeting_created",
+  "meeting_started",
+  "meeting_completed",
+  "agent_created",
+  "agent_updated",
+  "agent_deleted",
+  "recording_ready",
+  "transcription_done",
+] as const;
+
+export const activities = pgTable(
+  "activities",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    type: text("type", { enum: activityType }).notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    metadata: text("metadata"), // JSON string for extra info
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("activities_userId_idx").on(table.userId)],
+);
+
+export const voiceInteractions = pgTable(
+  "voice_interactions",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    meetingId: text("meeting_id")
+      .notNull()
+      .references(() => meetings.id, { onDelete: "cascade" }),
+    duration: text("duration"), // Duration in seconds
+    accuracy: text("accuracy"), // Accuracy score
+    responseTime: text("response_time"), // in ms
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("voice_interactions_userId_idx").on(table.userId)],
+);
